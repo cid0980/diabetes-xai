@@ -37,8 +37,9 @@ st.set_page_config(page_title="Explainable Diabetes Predictor", page_icon="🩺"
 # Hide Streamlit's in-app toolbar (Share/star/edit/GitHub/menu) for EVERYONE
 st.markdown(
     """<style>
-[data-testid="stToolbar"] {display: none !important;}
-/* NOTE: keep stHeader visible -- it holds the sidebar open/close (>>/<<) button */
+/* Hide toolbar buttons (Share/star/GitHub/menu) but KEEP the >> button: it lives INSIDE the toolbar! */
+[data-testid="stToolbarActions"] {display: none !important;}
+[data-testid="stMainMenu"] {display: none !important;}
 </style>""",
     unsafe_allow_html=True,
 )
