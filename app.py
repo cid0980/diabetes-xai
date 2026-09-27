@@ -152,27 +152,28 @@ if page == "🔮 Predict":
         preset = st.radio("Preset", ["Custom / Median", "Healthy example", "High-risk example"], horizontal=True)
         if preset == "Healthy example":
             for k, v in HEALTHY_PRESET.items():
-                st.session_state[f"in_{k}"] = v
+                st.session_state[f"num_{k}"] = v
         elif preset == "High-risk example":
             for k, v in RISK_PRESET.items():
-                st.session_state[f"in_{k}"] = v
+                st.session_state[f"num_{k}"] = v
 
         values = {}
         for f in FEATURES:
             lo, hi = BOUNDS[f]
-            default = float(st.session_state.get(f"in_{f}", DEFAULTS[f]))
-            if f in ("BMI", "DiabetesPedigreeFunction"):
+            step = 0.1 if f in ("BMI", "DiabetesPedigreeFunction") else 1.0
+            wkey = f"num_{f}"
+            if wkey in st.session_state:
                 values[f] = st.number_input(f, min_value=float(lo), max_value=float(hi),
-                                            value=default, step=0.1, key=f"num_{f}")
+                                            step=step, key=wkey)
             else:
                 values[f] = st.number_input(f, min_value=float(lo), max_value=float(hi),
-                                            value=default, step=1.0, key=f"num_{f}")
+                                            value=float(DEFAULTS[f]), step=step, key=wkey)
 
         st.subheader("2️⃣ Model")
         choice = st.selectbox("Choose model", MODEL_NAMES,
                               index=MODEL_NAMES.index(BEST_NAME) if BEST_NAME in MODEL_NAMES else 0)
         model = all_models[choice]
-        predict_btn = st.button("🔍 Predict Risk", type="primary", use_container_width=True)
+        predict_btn = st.button("🔍 Predict Risk", type="primary", width="stretch")
 
     with col_out:
         if predict_btn:
@@ -194,7 +195,7 @@ if page == "🔮 Predict":
             if HAS_SHAP:
                 try:
                     with st.spinner("Computing SHAP explanation..."):
-                        explainer = shap.TreeExplainer(model) if hasattr(model, "estimators_") or "XGB" in choice or "Forest" in choice or "Tree" in choice else shap.Explainer(model, BG_SCALED)
+                        explainer = shap.TreeExplainer(model) if hasattr(model, "estimators_") or "XGB" in choice or "Forest" in choice or "Tree" in choice else shap.Explainer(model, BG_SCALED[:30])
                         sv = explainer(scaled)
                         vals = np.array(sv.values)
                         # normalize shape to (n_features,)
@@ -271,7 +272,7 @@ if page == "🔮 Predict":
             for n in textual_explanation(values, shap_ranking):
                 lines.append("  - " + n)
             st.download_button("📥 Download report (.txt)", "\n".join(lines),
-                               file_name="diabetes_risk_report.txt", use_container_width=True)
+                               file_name="diabetes_risk_report.txt", width="stretch")
         else:
             st.info("👈 Enter values and click **Predict Risk**. Try the presets!")
 
@@ -295,19 +296,19 @@ elif page == "📊 Model Comparison":
             comp_rows.append({"Model": m + " (new)", "Paper Acc %": None,
                               "Our 10-fold Acc %": round(improved[m]["accuracy"], 2),
                               "Our ROC": round(improved[m]["roc_auc"], 3)})
-    st.dataframe(pd.DataFrame(comp_rows), use_container_width=True)
+    st.dataframe(pd.DataFrame(comp_rows), width="stretch")
 
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("#### Accuracy: Paper vs Ours")
         dfp = pd.DataFrame([{"Model": r["Model"], "Paper": r["Paper Acc %"] or 0,
-                             "Ours": r["Ours_10fold_Acc"]} for r in comp_rows[:6]])
+                             "Ours": r["Our 10-fold Acc %"]} for r in comp_rows[:6]])
         st.bar_chart(dfp.set_index("Model"))
     with c2:
         st.markdown("#### Holdout (20%) — tuned models")
         ht = pd.DataFrame([{"Model": k, "Acc": round(v["accuracy"], 1), "ROC": round(v["roc_auc"], 3)}
                            for k, v in holdout.items()]).sort_values("ROC", ascending=False)
-        st.dataframe(ht, use_container_width=True)
+        st.dataframe(ht, width="stretch")
 
     st.markdown(f"#### 🏆 Best model: {BEST_NAME}")
     cm = holdout[BEST_NAME]["confusion_matrix"]
@@ -357,7 +358,7 @@ elif page == "🧠 Global Explanations":
                 fig, ax = plt.subplots(figsize=(8, 5))
                 shap.summary_plot(sv, BG_SCALED, feature_names=FEATURES, show=False)
                 plt.tight_layout()
-                st.pyplot(fig, bbox_inches="tight")
+                st.pyplot(fig)
                 plt.close(fig)
         except Exception as e:
             st.error(f"SHAP summary failed: {e}")
