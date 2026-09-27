@@ -1,0 +1,6 @@
+[client]
+# Hide Share / star / edit / GitHub icons — show only the ⋮ menu
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
