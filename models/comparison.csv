@@ -1,0 +1,9 @@
+Model,Paper_Acc,Ours_10fold_Acc,Ours_ROC
+Naive Bayes,76.3,74.6,0.813
+SVM,65.1,74.74,0.826
+Decision Tree,73.82,70.94,0.684
+Logistic Regression,,75.51,0.836
+Random Forest,,75.77,0.828
+XGBoost,,75.76,0.833
+Random Forest (tuned),,76.62,0.832
+XGBoost (tuned),,75.32,0.828
