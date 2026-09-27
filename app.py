@@ -11,6 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import altair as alt
 import streamlit as st
 
 # Optional XAI libs (graceful fallback if missing)
@@ -32,6 +33,15 @@ from bootstrap import ensure_artifacts
 ensure_artifacts(BASE)
 
 st.set_page_config(page_title="Explainable Diabetes Predictor", page_icon="🩺", layout="wide")
+
+# Hide Streamlit's in-app toolbar (Share/star/edit/GitHub/menu) for EVERYONE
+st.markdown(
+    """<style>
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stHeader"] {display: none !important;}
+</style>""",
+    unsafe_allow_html=True,
+)
 
 FEATURES = ["Pregnancies", "Glucose", "BloodPressure", "SkinThickness",
             "Insulin", "BMI", "DiabetesPedigreeFunction", "Age"]
@@ -303,7 +313,15 @@ elif page == "📊 Model Comparison":
         st.markdown("#### Accuracy: Paper vs Ours")
         dfp = pd.DataFrame([{"Model": r["Model"], "Paper": r["Paper Acc %"] or 0,
                              "Ours": r["Our 10-fold Acc %"]} for r in comp_rows[:6]])
-        st.bar_chart(dfp.set_index("Model"))
+        melted = dfp.melt("Model", var_name="Source", value_name="Accuracy")
+        grouped = (
+            alt.Chart(melted)
+            .mark_bar()
+            .encode(x=alt.X("Model:N", axis=alt.Axis(labelAngle=-30)),
+                    xOffset="Source:N", y="Accuracy:Q", color="Source:N")
+            .properties(height=320)
+        )
+        st.altair_chart(grouped, width="stretch")
     with c2:
         st.markdown("#### Holdout (20%) — tuned models")
         ht = pd.DataFrame([{"Model": k, "Acc": round(v["accuracy"], 1), "ROC": round(v["roc_auc"], 3)}

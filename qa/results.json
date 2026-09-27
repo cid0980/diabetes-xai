@@ -1,0 +1,109 @@
+{
+  "url": "https://diabetes-xai.streamlit.app/",
+  "checks": [
+    {
+      "name": "app loads inside iframe",
+      "ok": true,
+      "detail": "4s"
+    },
+    {
+      "name": "no error box on load",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "preset fills Glucose=185",
+      "ok": false,
+      "detail": "Glucose=185.00"
+    },
+    {
+      "name": "prediction verdict renders",
+      "ok": true,
+      "detail": "0s"
+    },
+    {
+      "name": "SHAP chart renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "LIME chart renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "report download button renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no error box after predict",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Comparison page loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no error on Comparison (KeyError gone)",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "Global page loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "SHAP summary plot renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no error on Global",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "About page loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "no error on About",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "inner toolbar has no GitHub link",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "embed-mode loads",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "embed-mode hides outer GitHub/Fork",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile viewport loads",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "failed": [
+    "preset fills Glucose=185"
+  ]
+}
