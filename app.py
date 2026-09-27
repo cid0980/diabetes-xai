@@ -32,13 +32,13 @@ BASE = Path(__file__).parent
 from bootstrap import ensure_artifacts
 ensure_artifacts(BASE)
 
-st.set_page_config(page_title="Explainable Diabetes Predictor", page_icon="🩺", layout="wide")
+st.set_page_config(page_title="Explainable Diabetes Predictor", page_icon="🩺", layout="wide", initial_sidebar_state="expanded")
 
 # Hide Streamlit's in-app toolbar (Share/star/edit/GitHub/menu) for EVERYONE
 st.markdown(
     """<style>
 [data-testid="stToolbar"] {display: none !important;}
-[data-testid="stHeader"] {display: none !important;}
+/* NOTE: keep stHeader visible -- it holds the sidebar open/close (>>/<<) button */
 </style>""",
     unsafe_allow_html=True,
 )

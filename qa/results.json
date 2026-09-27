@@ -4,7 +4,7 @@
     {
       "name": "app loads inside iframe",
       "ok": true,
-      "detail": "4s"
+      "detail": "12s"
     },
     {
       "name": "no error box on load",
