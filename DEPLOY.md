@@ -1,65 +1,51 @@
-# Host FREE with auto-deploy like Vercel 🚀
+# Host FREE with auto-deploy like Vercel 🚀 (Streamlit Cloud)
 
-**Yes — Hugging Face Spaces works exactly like Vercel:**
-every Space is a git repo, and **every push / file edit auto-rebuilds and redeploys**
-(~3–6 min build, logs visible on the Space page, rollback = revert).
+**Why not Hugging Face?** HF now requires a paid PRO plan for any Space that runs
+Python compute (Gradio/Docker/Streamlit) — only Static stays free. So we use:
 
-Your project is already a clean git repo (committed ✅). Pick a path:
+**Streamlit Community Cloud** — free forever for public apps, ~1 GB RAM,
+sleeps after 12 quiet hours (wakes when visited), and **auto-redeploys on every
+GitHub push — exactly like Vercel.** You get a link like
+`https://diabetes-xai-abc123.streamlit.app`.
 
-## Path 1 — I push it for you (fastest, phone-only) ⚡
+Your repo here is committed and push-ready ✅ (already optimized with lazy SHAP/LIME loading for 1 GB RAM).
 
-1. Go to **https://huggingface.co** → Sign up / log in
-2. Create a token: **Settings → Access Tokens → Create** (fine-grained, ✅ write access to one Space — revoke it after, safe)
-3. Create the Space: **https://huggingface.co/new-space**
-   - Name: `diabetes-xai`, SDK: **Streamlit**, Public
-4. **Paste here in chat:** your HF username + Space name + the token
+## Path 1 — I push to your GitHub (fastest, phone-only) ⚡
 
-I'll push the whole repo from here → your Space builds → you get a permanent link.
-Delete the token after. Done, you never touch a file. 📱
+1. Log in at **https://github.com** (sign up if needed)
+2. Create repo: **https://github.com/new** → name `diabetes-xai` → **Public** → Create
+   (don't tick "Add a README")
+3. Create token: profile pic → **Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**
+   - Name: `arena-deploy`, select repo `diabetes-xai`, permission **Contents: Read and Write** → Generate → **Copy** (starts with `github_pat_...`)
+4. **Paste here in chat:** your GitHub username + the token
 
-## Path 2 — You upload via phone browser (5 min, no git)
+I'll push the whole repo **including trained models** (instant boot, no training wait).
+Then you do the fun 3-tap part below. Revoke the token after. 📱
 
-1. Log in at **https://huggingface.co** → **New Space** → name `diabetes-xai`, SDK **Streamlit**
-2. **Files → Add file → Upload** these 4 small files from this workspace:
-   - `app.py`, `train.py`, `bootstrap.py`, `requirements.txt`
-3. Wait ~5 min → live forever at `huggingface.co/spaces/<you>/diabetes-xai`
+## Path 2 — You upload via phone browser (no token)
 
-> Skip `data/` + `models/` (13 MB) — the app downloads data + trains itself on first boot. Verified ✅
-> Every future upload/edit = auto-rebuild, Vercel-style.
+1. Create the repo as in Path 1, steps 1–2
+2. In the repo → **Add file → Upload files** — upload these 5 from this workspace:
+   - `app.py`, `train.py`, `bootstrap.py`, `requirements.txt`, `data/diabetes.csv`
+3. Teams will auto-train models on first boot (~2 min) — verified working ✅
 
-## Path 3 — Git push from laptop later 💻
+## The 3-tap deploy (both paths) 🎯
 
-```bash
-git clone https://huggingface.co/spaces/<you>/diabetes-xai
-# copy all project files in, then:
-git add -A && git commit -m "deploy" && git push
-# → Space auto-rebuilds. Every future push = auto-redeploy, like Vercel.
-```
+1. Go to **https://share.streamlit.io** → **Sign in with GitHub** → authorize
+2. **New app** → Repository: `you/diabetes-xai` → Branch: main → Main file: `app.py`
+3. Tap **Deploy** → wait ~5 min → permanent link! 🎉
 
-## Optional: GitHub as source of truth → auto-sync to HF
+## Vercel-style auto-updates 🔄
 
-Keep code on GitHub, add this Action so **every GitHub push auto-updates the Space**:
-
-`.github/workflows/sync-to-hf.yml`:
-```yaml
-name: Sync to HF Space
-on:
-  push:
-    branches: [main]
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
-      - run: git push https://<you>:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/<you>/diabetes-xai main:main
-```
-(Add `HF_TOKEN` under GitHub repo → Settings → Secrets.)
+- Every push / web-upload to the GitHub repo = **automatic rebuild + redeploy**
+- Logs + reboot + delete: open your app → **Manage app** (bottom-right menu)
+- Rollback: revert the commit on GitHub → auto-redeploys the old version
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| Build fails on a package | Space ⋮ menu → "Factory reboot" |
-| First load shows error | Wait 2 min + refresh (first boot trains models) |
-| Picked wrong SDK | Space → Settings → change SDK to Streamlit |
+| First visit slow / "Please wait" | Cold start + install; wait 1–2 min, refresh |
+| App 'sleeping' after 12 h idle | Normal on free tier — visit wakes it in ~1 min |
+| Build error on a package | Manage app → Reboot; versions in requirements.txt are verified |
+| "Add a README" ticked at repo creation | Fine for Path 2; for Path 1 leave it unticked (avoids push conflict) |
