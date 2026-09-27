@@ -19,7 +19,7 @@ def test_predict_all_models():
     for m in ALL_MODELS:
         at = fresh()
         # 1. preset must actually fill the inputs
-        at.radio[0].set_value("High-risk example").run()
+        at.radio[1].set_value("High-risk example").run()
         assert not at.exception, f"preset failed: {at.exception}"
         g = [w for w in at.number_input if w.label == "Glucose"][0]
         assert float(g.value) == 185, f"preset broken for {m}: Glucose={g.value}"
@@ -34,14 +34,14 @@ def test_predict_all_models():
 
 def test_comparison():
     at = fresh()
-    at.sidebar.radio[0].set_value("\U0001F4CA Model Comparison").run()
+    at.radio[0].set_value("\U0001F4CA Model Comparison").run()
     assert not at.exception, f"comparison failed: {at.exception}"
     print("  PASS Comparison page", flush=True)
 
 
 def test_global():
     at = fresh()
-    at.sidebar.radio[0].set_value("\U0001F9E0 Global Explanations").run()
+    at.radio[0].set_value("\U0001F9E0 Global Explanations").run()
     assert not at.exception, f"global failed: {at.exception}"
     at.button[0].click().run()  # SHAP summary button
     assert not at.exception, f"SHAP summary failed: {at.exception}"
@@ -50,7 +50,7 @@ def test_global():
 
 def test_about():
     at = fresh()
-    at.sidebar.radio[0].set_value("\U0001F4C4 About Paper").run()
+    at.radio[0].set_value("\U0001F4C4 About Paper").run()
     assert not at.exception, f"about failed: {at.exception}"
     print("  PASS About page", flush=True)
 

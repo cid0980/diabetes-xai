@@ -145,10 +145,12 @@ def textual_explanation(values: dict, shap_ranking=None):
 
 
 # ---------------- Sidebar ----------------
+PAGES = ["🔮 Predict", "📊 Model Comparison", "🧠 Global Explanations", "📄 About Paper"]
 st.sidebar.title("🩺 Diabetes XAI")
-page = st.sidebar.radio("Go to", ["🔮 Predict", "📊 Model Comparison", "🧠 Global Explanations", "📄 About Paper"])
 st.sidebar.markdown("---")
 st.sidebar.info(f"**Best model:** {BEST_NAME}\n\nDataset: PIDD (768 patients)\n\n⚠️ Educational demo — not medical advice.")
+# Main-area navigation: always visible on phone + desktop, never needs the sidebar
+page = st.radio("Navigate", PAGES, horizontal=True)
 
 # ---------------- Page: Predict ----------------
 if page == "🔮 Predict":
