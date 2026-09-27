@@ -237,8 +237,9 @@ if page == "🔮 Predict":
                 st.write("- " + n)
 
             # ---- LIME ----
-            if HAS_LIME:
+            if _has_lime():
                 try:
+                    from lime import lime_tabular
                     with st.spinner("Computing LIME explanation..."):
                         lime_exp = lime_tabular.LimeTabularExplainer(
                             BG_ORIGINAL, feature_names=FEATURES,

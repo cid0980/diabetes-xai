@@ -1,60 +1,65 @@
-# Deploy FREE on your phone (no laptop) 📱 — ~5 minutes
+# Host FREE with auto-deploy like Vercel 🚀
 
-**Use Hugging Face Spaces** — free forever, no credit card, gives you a permanent link like
-`https://huggingface.co/spaces/YOURNAME/diabetes-xai`
+**Yes — Hugging Face Spaces works exactly like Vercel:**
+every Space is a git repo, and **every push / file edit auto-rebuilds and redeploys**
+(~3–6 min build, logs visible on the Space page, rollback = revert).
 
-The project is now **self-bootstrapping**: you upload only 4 small files, and the
-app downloads the dataset + trains itself on first launch. Verified working ✅
+Your project is already a clean git repo (committed ✅). Pick a path:
 
-## Step 1 — Get the 4 files onto your phone (1 min)
+## Path 1 — I push it for you (fastest, phone-only) ⚡
 
-Open this workspace on your phone's browser and download these 4 files
-(each is small —KBs, no copy-paste needed):
+1. Go to **https://huggingface.co** → Sign up / log in
+2. Create a token: **Settings → Access Tokens → Create** (fine-grained, ✅ write access to one Space — revoke it after, safe)
+3. Create the Space: **https://huggingface.co/new-space**
+   - Name: `diabetes-xai`, SDK: **Streamlit**, Public
+4. **Paste here in chat:** your HF username + Space name + the token
 
-1. `diabetes-xai/app.py`
-2. `diabetes-xai/train.py`
-3. `diabetes-xai/bootstrap.py`
-4. `diabetes-xai/requirements.txt`
+I'll push the whole repo from here → your Space builds → you get a permanent link.
+Delete the token after. Done, you never touch a file. 📱
 
-> You do NOT need `data/` or `models/` (13 MB) — the cloud rebuilds them automatically.
+## Path 2 — You upload via phone browser (5 min, no git)
 
-## Step 2 — Create a free Hugging Face account (1 min)
+1. Log in at **https://huggingface.co** → **New Space** → name `diabetes-xai`, SDK **Streamlit**
+2. **Files → Add file → Upload** these 4 small files from this workspace:
+   - `app.py`, `train.py`, `bootstrap.py`, `requirements.txt`
+3. Wait ~5 min → live forever at `huggingface.co/spaces/<you>/diabetes-xai`
 
-1. Go to **https://huggingface.co** → Sign Up (Google one-tap works)
-2. Verify email if asked
+> Skip `data/` + `models/` (13 MB) — the app downloads data + trains itself on first boot. Verified ✅
+> Every future upload/edit = auto-rebuild, Vercel-style.
 
-## Step 3 — Create the Space (1 min)
+## Path 3 — Git push from laptop later 💻
 
-1. Go to **https://huggingface.co/new-space**
-2. Fill in:
-   - **Space name:** `diabetes-xai`
-   - **SDK:** select **Streamlit** ⚠️ (important!)
-   - Visibility: Public (free) — or Private, both free
-3. Tap **Create Space**
+```bash
+git clone https://huggingface.co/spaces/<you>/diabetes-xai
+# copy all project files in, then:
+git add -A && git commit -m "deploy" && git push
+# → Space auto-rebuilds. Every future push = auto-redeploy, like Vercel.
+```
 
-## Step 4 — Upload the 4 files (1 min)
+## Optional: GitHub as source of truth → auto-sync to HF
 
-1. In your new Space → **Files** tab → **Add file → Upload files**
-2. Select the 4 downloaded files → **Commit**
-3. Wait ~4–6 min while it builds (you'll see "Building..." then your app 🎉)
+Keep code on GitHub, add this Action so **every GitHub push auto-updates the Space**:
 
-First launch trains the models (~1–2 min) — just wait, then it works forever.
-
-## Step 5 — Share it
-
-Your permanent link: `https://huggingface.co/spaces/<you>/diabetes-xai`
-Put this link in your project report under "Deployed Demo". It never sleeps.
+`.github/workflows/sync-to-hf.yml`:
+```yaml
+name: Sync to HF Space
+on:
+  push:
+    branches: [main]
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - run: git push https://<you>:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/<you>/diabetes-xai main:main
+```
+(Add `HF_TOKEN` under GitHub repo → Settings → Secrets.)
 
 ## Troubleshooting
 
 | Problem | Fix |
 |---|---|
-| Build error mentioning a package | Tap ⋮ → "Factory reboot", it retries clean |
-| App shows error on first load | Wait 2 min and refresh — first boot trains models |
-| Wrong SDK picked | Space Settings → change SDK to Streamlit |
-
-## Alternative: Streamlit Cloud (also free)
-
-Needs a GitHub account + repo upload — slightly more steps on mobile, so
-Hugging Face above is recommended. If you prefer it: share.streamlit.io → deploy
-from the same 4 files pushed to GitHub.
+| Build fails on a package | Space ⋮ menu → "Factory reboot" |
+| First load shows error | Wait 2 min + refresh (first boot trains models) |
+| Picked wrong SDK | Space → Settings → change SDK to Streamlit |
