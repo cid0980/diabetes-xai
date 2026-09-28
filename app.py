@@ -147,11 +147,26 @@ def textual_explanation(values: dict, shap_ranking=None):
 
 # ---------------- Sidebar ----------------
 PAGES = ["🔮 Predict", "📊 Model Comparison", "🧠 Global Explanations", "📄 About Paper"]
+if "page" not in st.session_state:
+    st.session_state.page = PAGES[0]
+
+def _nav_from_sidebar():
+    st.session_state.page = st.session_state.nav_side
+    st.session_state.nav_main = st.session_state.nav_side
+
+def _nav_from_main():
+    st.session_state.page = st.session_state.nav_main
+    st.session_state.nav_side = st.session_state.nav_main
+
 st.sidebar.title("🩺 Diabetes XAI")
+st.sidebar.radio("Go to", PAGES, key="nav_side",
+                 index=PAGES.index(st.session_state.page), on_change=_nav_from_sidebar)
 st.sidebar.markdown("---")
 st.sidebar.info(f"**Best model:** {BEST_NAME}\n\nDataset: PIDD (768 patients)\n\n⚠️ Educational demo — not medical advice.")
-# Main-area navigation: always visible on phone + desktop, never needs the sidebar
-page = st.radio("Navigate", PAGES, horizontal=True)
+# Same navigation in main area: works even when sidebar is closed (esp. phones)
+st.radio("Navigate", PAGES, horizontal=True, key="nav_main",
+         index=PAGES.index(st.session_state.page), on_change=_nav_from_main)
+page = st.session_state.page
 
 # ---------------- Page: Predict ----------------
 if page == "🔮 Predict":

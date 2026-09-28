@@ -32,6 +32,19 @@ def test_predict_all_models():
         print(f"  PASS predict+SHAP+LIME: {m}", flush=True)
 
 
+def test_nav_sync_both_ways():
+    at = fresh()
+    at.sidebar.radio[0].set_value("📊 Model Comparison").run()
+    assert not at.exception, f"sidebar nav failed: {at.exception}"
+    assert at.radio[0].value == "📊 Model Comparison", "main pills not synced from sidebar"
+    assert at.title[0].value == "📊 Paper vs Our System", "page did not switch via sidebar"
+    at.radio[0].set_value("📄 About Paper").run()
+    assert not at.exception, f"main nav failed: {at.exception}"
+    assert at.sidebar.radio[0].value == "📄 About Paper", "sidebar not synced from main"
+    assert at.title[0].value == "📄 About this project", "page did not switch via main"
+    print("  PASS nav sync both ways", flush=True)
+
+
 def test_comparison():
     at = fresh()
     at.radio[0].set_value("\U0001F4CA Model Comparison").run()
@@ -59,6 +72,7 @@ if __name__ == "__main__":
     print("Testing Predict page x 8 models...", flush=True)
     test_predict_all_models()
     print("Testing other pages...", flush=True)
+    test_nav_sync_both_ways()
     test_comparison()
     test_global()
     test_about()
